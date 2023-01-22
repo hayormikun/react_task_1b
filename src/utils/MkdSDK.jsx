@@ -12,9 +12,32 @@ export default function MkdSDK() {
   this.setTable = function (table) {
     this._table = table;
   };
-  
+
   this.login = async function (email, password, role) {
-    //TODO
+    try {
+      await fetch(this._baseurl + "/v2/api/lambda/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-project":
+            "cmVhY3R0YXNrOmQ5aGVkeWN5djZwN3p3OHhpMzR0OWJtdHNqc2lneTV0Nw==",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          role,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          return data;
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    } catch (err) {
+      throw new Error(err);
+    }
   };
 
   this.getHeader = function () {
@@ -27,7 +50,7 @@ export default function MkdSDK() {
   this.baseUrl = function () {
     return this._baseurl;
   };
-  
+
   this.callRestAPI = async function (payload, method) {
     const header = {
       "Content-Type": "application/json",
@@ -55,7 +78,7 @@ export default function MkdSDK() {
           throw new Error(jsonGet.message);
         }
         return jsonGet;
-      
+
       case "PAGINATE":
         if (!payload.page) {
           payload.page = 1;
@@ -84,11 +107,43 @@ export default function MkdSDK() {
       default:
         break;
     }
-  };  
-
-  this.check = async function (role) {
-    //TODO
   };
 
-  return this;
+  this.check = async function (role) {
+    try {
+      await fetch(this._baseurl + "/v2/api/lambda/check", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-project":
+            "cmVhY3R0YXNrOmQ5aGVkeWN5djZwN3p3OHhpMzR0OWJtdHNqc2lneTV0Nw==",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        body: JSON.stringify({
+          role: "admin",
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.status === "200") {
+            return data;
+          }
+
+          throw new Error({
+            message: "Token Expired",
+          });
+        })
+        .catch((err) => {
+          throw new Error({
+            messgee: err,
+          });
+        });
+    } catch (error) {
+      throw new Error({
+        message: error,
+      });
+    }
+
+    return this;
+  };
 }
