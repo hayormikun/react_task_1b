@@ -33,10 +33,14 @@ export default function MkdSDK() {
           return data;
         })
         .catch((err) => {
-          throw new Error(err);
+          throw new Error({
+            message: err
+          });
         });
     } catch (err) {
-      throw new Error(err);
+      throw new Error({
+        message: err
+      });
     }
   };
 
