@@ -5,8 +5,8 @@ module.exports = {
   ],
   theme: {
     extend: {
-      fontWeight: {
-        font100: "100"
+      fontFamily: {
+        "fontInter": "Inter"
       },
     },
   },

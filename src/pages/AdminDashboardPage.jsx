@@ -2,15 +2,36 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 
 const AdminDashboardPage = () => {
-
   const [data, setData] = useState(null);
-  
+  const [payload, setPayload] = useState({
+    page: 1,
+    limit: 10,
+  });
+
+  const num_pages = 12;
+
   useEffect(async () => {
     let sdk = new MkdSDK();
-    const response = await sdk.callRestAPI("", "GET")
-    setData(response.json);
-  }, []);
-  
+    const response = await sdk.callRestAPI(payload, "PAGINATE");
+    setData(response);
+  }, [data]);
+
+  const handleNext = () => {
+    setData((prev) => prev + 1);
+    setPayload({
+      page: data,
+      limit: 10,
+    });
+  };
+
+  const handlePrev = (prev) => {
+    setData((prev) => prev - 1);
+    setPayload({
+      page: data,
+      limit: 10,
+    });
+  };
+
   return (
     <>
       <div className="w-full bg-[#111111] flex justify-center items-center text-7xl h-screen text-gray-700 ">
@@ -19,7 +40,7 @@ const AdminDashboardPage = () => {
             <h1 className="text-white h-[20px] w-[102px] font-lg text-[48px] leading-5 font-[900]">
               APP
             </h1>
-            <button className="bg-[#97f443] flex flex-row gap-1 font-thin rounded-sm text-[#050505] text-[16px] justify-center items-center text-center">
+            <button className="bg-[#97f443] py-3 px-6 flex flex-row tracking-wider w-full gap-[10px] font-thin rounded-[40px] text-[#050505] text-[16px] justify-center items-center text-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -31,7 +52,6 @@ const AdminDashboardPage = () => {
                 stroke-linecap="round"
                 stroke-linejoin="round"
               >
-
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
@@ -64,7 +84,29 @@ const AdminDashboardPage = () => {
           </div>
 
           <div className="">
-            <Table data={data}/>
+            <Table data={data} />
+          </div>
+
+          <div className="flex justify-between my-10">
+            {payload.page > 1 && (
+              <button
+                disabled={payload.page <= 1}
+                onClick={() => handlePrev()}
+                className="py-3 px-5 font-medium rounded-md bg-[#97f443] text-white tracking-wider w-full"
+              >
+                Previous
+              </button>
+            )}
+
+            {payload.page < num_pages && (
+              <button
+                disabled={(payload.page = num_pages)}
+                onClick={() => handleNext()}
+                className="py-3 px-5 font-medium rounded-md bg-[#97f443] text-white tracking-wider w-full"
+              >
+                Next
+              </button>
+            )}
           </div>
         </div>
       </div>

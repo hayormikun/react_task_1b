@@ -47,14 +47,15 @@ export const tokenExpireError = (dispatch, errorMessage) => {
 const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  React.useEffect(() => {
+  React.useEffect(async() => {
     const role = localStorage.getItem("role");
-    sdk.check(role);
-    if (errorMessage === "TOKEN_EXPIRED") {
+    try {
+      await sdk.check(role);
+    } catch (err) {
       dispatch({
         type: "Logout",
       });
-      window.location.href = "/" + role + "/login";
+      alert(err.message);
     }
   }, []);
 

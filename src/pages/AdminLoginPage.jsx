@@ -37,10 +37,10 @@ const AdminLoginPage = () => {
           payload: response,
         });
 
-        navigate(SnackBar)
+        navigate(SnackBar);
       }
     } catch (error) {
-      setError(error);
+      throw new Error({ message: error });
     }
   };
 
